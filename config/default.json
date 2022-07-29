@@ -1,9 +1,0 @@
-{  "port": 5000,
-"mongoUri":"mongodb+srv://andrew:andrew12345!!!@cluster0.fv3gna5.mongodb.net/?retryWrites=true&w=majority" ,
-"jwtSecret": "ista  helper for insta",
-"userEmail": "insta-@ukr.net", 
-"passEmail": "vJXsA6lBtI1HFA37",
-"hostEmail":"smtp.ukr.net",
-"portEmail":"465"
-
-  }
