@@ -5,7 +5,7 @@ const schema = new Schema({
   confirmed:{type:Boolean},
   cartNumber: {type: String},
   name: {type: String},
-  orders: [{ type: Array, ref: 'Order' }]
+  orders: { type: Array, ref: 'Order' }
   
 })
 
