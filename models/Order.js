@@ -15,7 +15,9 @@ const schema = new Schema({
   telephone: {type: String, default: ""},
   postNumer: {type: String, default: ""},
   userId: {type: String, default: ""},
-  price: {type: String, default: ""}
+  price: {type: String, default: ""},
+  time: {type: String, default: ""}
+
 })
 
 module.exports    = model('Order', schema) 

@@ -9,13 +9,11 @@ var bcrypt = require("bcryptjs");
 const config = require("config");
 const sendEmail = require("../sendEmail");
 
-
-
 // api / auth/register
 //andrew1990mk@gmail.com
 router.post("/register", async (req, res, next) => {
   try {
-    const { email, password, cartNumber, name } = req.body;   
+    const { email, password, cartNumber, name } = req.body;
     console.log(req.body);
     const candidate = await User.findOne({ email });
     if (candidate) {
@@ -40,6 +38,8 @@ router.post("/register", async (req, res, next) => {
   }
 });
 
+
+
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -56,13 +56,12 @@ router.post("/login", async (req, res) => {
         .json({ message: "Неверный пароль, попробуйте снова" });
     }
 
-    const {  cartNumber, confirmed, name } = user;
+    const { cartNumber, confirmed, name } = user;
     console.log(user.id);
 
     const token = jwt.sign({ userId: user.id }, config.get("jwtSecret"), {
       expiresIn: "1h",
     });
-
 
     res.status(200).json({
       message: {

@@ -11,13 +11,9 @@ const config = require("config");
 
 //andrew1990mk@gmail.com
 router.post("/AddOrder", async (req, res, next) => {
+  console.log("addOrder tryt");
   let checkParams = () => {
-    if (
-      req.body.userId &&
-      req.body.firstName &&
-      req.body.instaLinkGoods &&
-      req.body.lastName
-    ) {
+    if (req.body.userId && req.body.instaLinkGoods) {
       if (req.body.userId.length == 24) {
         console.log("permited");
         return true;
@@ -25,28 +21,32 @@ router.post("/AddOrder", async (req, res, next) => {
     }
   };
 
+
+  let t = new Date()
   if (checkParams()) {
     try {
       console.log(req.body);
+      
+
       const order = new Order({
-          instaLinkCustomer: req.body.instaLinkCustomer,
-          instaLinkGoods: req.body.instaLinkGoods,
-          instaLinkGoods1: req.body.instaLinkGoods1,
-          instaLinkGoods2: req.body.instaLinkGoods2,
-          instaLinkGoods3: req.body.instaLinkGoods3,
-          arrived: req.body.arrived,
-          payed: req.body.payed,
-          comment: req.body.comment,
-          firstName: req.body.firstName,
-          lastName: req.body.lastName,
-          city: req.body.city,
-          telephone: req.body.telephone,
-          postNumer: req.body.postNumer,
-          userId: req.body.userId, 
-          price: req.body.price,
-      }
-      )
-      order.save()
+        instaLinkCustomer: req.body.instaLinkCustomer,
+        instaLinkGoods: req.body.instaLinkGoods,
+        instaLinkGoods1: req.body.instaLinkGoods1,
+        instaLinkGoods2: req.body.instaLinkGoods2,
+        instaLinkGoods3: req.body.instaLinkGoods3,
+        arrived: req.body.arrived,
+        payed: req.body.payed,
+        comment: req.body.comment,
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        city: req.body.city,
+        telephone: req.body.telephone,
+        postNumer: req.body.postNumer,
+        userId: req.body.userId,
+        price: req.body.price,
+        time: t.toLocaleString('ru', { month: 'long' }) +"(" +t.getDate() + ")  "+ t.getHours()+ ":"+ t.getMinutes()
+      });
+      order.save();
 
       res.status(201).json({ message: "Заказ создан" });
     } catch (e) {
@@ -91,12 +91,8 @@ router.post("/deleteOrder", async (req, res, next) => {
   }
 });
 
-
-
-
-
 router.post("/updateOrder", async (req, res, next) => {
-  console.log("aaa")
+  console.log("aaa");
   let checkParams = () => {
     if (req.body.userId && req.body.instaLinkGoods) {
       if (req.body.userId.length == 24) {
@@ -106,36 +102,36 @@ router.post("/updateOrder", async (req, res, next) => {
   };
 
   if (checkParams()) {
-    const { id, userId, instaLinkCustomer, instaLinkGoods } = req.body;
+    const { userId } = req.body;
     try {
       ///console.log(instaLinkGoods, userId, id);
-      console.log(userId, ' ', req.body._id)
-      let _id = req.body._id
+      console.log(userId, " ", req.body._id);
+      let _id = req.body._id;
 
-      let z = req.body
-      console.log(z,"zz")
-      
+      let z = req.body;
+      console.log(z, "zz");
 
-     let user = await Order.updateOne({userId,_id},{
-      instaLinkCustomer: req.body.instaLinkCustomer,
-      instaLinkGoods: req.body.instaLinkGoods,
-      instaLinkGoods1: req.body.instaLinkGoods1,
-      instaLinkGoods2: req.body.instaLinkGoods2,
-      instaLinkGoods3: req.body.instaLinkGoods3,
-      arrived: req.body.arrived,
-      payed: req.body.payed,
-      comment: req.body.comment,
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
-      city: req.body.city,
-      telephone: req.body.telephone,
-      postNumer: req.body.postNumer,
-      price: req.body.price,
+      let user = await Order.updateOne(
+        { userId, _id },
+        {
+          instaLinkCustomer: req.body.instaLinkCustomer,
+          instaLinkGoods: req.body.instaLinkGoods,
+          instaLinkGoods1: req.body.instaLinkGoods1,
+          instaLinkGoods2: req.body.instaLinkGoods2,
+          instaLinkGoods3: req.body.instaLinkGoods3,
+          arrived: req.body.arrived,
+          payed: req.body.payed,
+          comment: req.body.comment,
+          firstName: req.body.firstName,
+          lastName: req.body.lastName,
+          city: req.body.city,
+          telephone: req.body.telephone,
+          postNumer: req.body.postNumer,
+          price: req.body.price,
+        }
+      );
 
-  }
-     ) 
-
-      console.log(user)
+      console.log(user);
       res.status(201).json({ message: "Заказ создан" });
     } catch (e) {
       res.status(500).json({ message: "errror happends" });
@@ -144,20 +140,25 @@ router.post("/updateOrder", async (req, res, next) => {
   }
 });
 
-
-
 router.post("/showOrder", async (req, res, next) => {
   let checkParams = () => {
     if (req.body.userId) {
       if (req.body.userId.length == 24) {
         return true;
       }
-    }else{console.log("blocked",req.body);}
+    } else {
+      console.log("blocked", req.body);
+    }
   };
 
   if (checkParams()) {
-    const orders = await Order.find({ userId: req.body.userId });
-    console.log(orders,"show order");
+    const orders = await Order.find({ userId: req.body.userId }).sort("arrived");
+    if (!orders) {
+      res.status(404).json({ message: "not found" });
+      return;
+    }
+
+    console.log(orders, "show order");
     try {
       res.status(201).json({ message: orders });
     } catch (e) {
@@ -168,7 +169,6 @@ router.post("/showOrder", async (req, res, next) => {
 });
 
 router.post("/detailOrder", async (req, res, next) => {
-  // const { email, password, cartNumber, name } = req.body;
   let checkParams = () => {
     if (req.body._id && req.body.userId) {
       if (req.body._id.length == 24 && req.body.userId.length == 24) {
@@ -176,10 +176,14 @@ router.post("/detailOrder", async (req, res, next) => {
       }
     }
   };
+
   if (checkParams()) {
-    //console.log(req.body, "body");
-    const page = await Order.findById(req.body._id)
-    //console.log(page,"detailOrder");
+    const page = await Order.findById(req.body._id);
+    if (!page) {
+      res.status(404).json({ message: "not found" });
+      return;
+    }
+
     try {
       res.status(201).json({ message: page });
     } catch (e) {
@@ -187,12 +191,9 @@ router.post("/detailOrder", async (req, res, next) => {
       console.log(e);
     }
   } else {
-   // console.log("asdfasdf");
     res.status(200).json({ message: "validation failed" });
   }
 });
-
-
 
 router.post("/detailUser", async (req, res, next) => {
   // const { email, password, cartNumber, name } = req.body;
@@ -205,11 +206,16 @@ router.post("/detailUser", async (req, res, next) => {
   };
   if (checkParams()) {
     console.log(req.body, "body");
-    const page = await User.findById(req.body.userId)
+    const page = await User.findById(req.body.userId);
+    if (!page) {
+      res.status(404).json({ message: "not found" });
 
-    console.log(page,"detailUser");
+      return;
+    }
+
+    console.log(page, "detailUser");
     try {
-      res.status(201).json({ cartNumber:page.cartNumber ,name:page.name ,  });
+      res.status(201).json({ cartNumber: page.cartNumber, name: page.name });
     } catch (e) {
       res.status(500).json({ message: "errror happends" });
       console.log(e);
@@ -219,8 +225,6 @@ router.post("/detailUser", async (req, res, next) => {
     res.status(200).json({ message: "validation failed" });
   }
 });
-
-
 
 router.post("/updateOrderField", async (req, res, next) => {
   // const { email, password, cartNumber, name } = req.body;
@@ -234,14 +238,26 @@ router.post("/updateOrderField", async (req, res, next) => {
   };
   if (checkParams()) {
     console.log(req.body, "body");
-    if(req.body.payload.payload === "arrived") {const page = await Order.findOneAndUpdate({_id:req.body._id},{$set:{arrived: req.body.payload.arrived}})}
-    if(req.body.payload.payload === "payed")   {const page = await Order.findOneAndUpdate({_id:req.body._id},{$set:{payed: req.body.payload.payed}})}
-    if(req.body.payload.payload === "delete") {const page = await Order.findOneAndDelete({_id:req.body._id})}
+    if (req.body.payload.payload === "arrived") {
+      await Order.findOneAndUpdate(
+        { _id: req.body._id },
+        { $set: { arrived: req.body.payload.arrived } }
+      );
+    }
+    if (req.body.payload.payload === "payed") {
+      await Order.findOneAndUpdate(
+        { _id: req.body._id },
+        { $set: { payed: req.body.payload.payed } }
+      );
+    }
+    if (req.body.payload.payload === "delete") {
+      await Order.findOneAndDelete({ _id: req.body._id });
+    }
 
-    let r = await Order.findOne({_id:req.body._id})
+    let r = await Order.findOne({ _id: req.body._id });
     //console.log(response.arrived, response.payed,"detailUser");
     try {
-      res.status(201).json({arrived: r.arrived,payed:r.payed });  //req.body.userId
+      res.status(201).json({ arrived: r.arrived, payed: r.payed }); //req.body.userId
     } catch (e) {
       res.status(500).json({ message: "errror happends" });
       console.log(e);

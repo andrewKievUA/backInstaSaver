@@ -7,9 +7,17 @@ var cors = require("cors");
 
 app.use(cors());
 
+
+
+let t = new Date()
+
+
+console.log(t.toLocaleString('ru', { month: 'long' }) + " "+t.getDate() + ":"+ t.getHours()+ ":"+ t.getMinutes());
+
 app.use(express.json({ extended: true }));
 app.use('/api/auth',require('./routes/auth.routes') )
 app.use('/api',require('./routes/order.routes.js') )
+app.use('/api/drop',require('./routes/links.routes.js') )
 
 async function start() {
   try {
